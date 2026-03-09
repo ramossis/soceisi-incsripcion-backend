@@ -1,7 +1,5 @@
 version: '3.8'
-
 services:
-  # Base de Datos MySQL
   db:
     image: mysql:8.0
     container_name: soceisi_mysql
@@ -14,10 +12,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      # Usamos un volumen gestionado por Docker para evitar líos de permisos en NTFS
       - mysql_data:/var/lib/mysql
 
-  # Interfaz Web phpMyAdmin
   phpmyadmin:
     image: phpmyadmin:latest
     container_name: soceisi_pma
