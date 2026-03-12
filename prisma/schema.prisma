@@ -13,13 +13,92 @@ datasource db {
   provider = "mysql"
 }
 
-model Estudiante {
-  id        Int      @id @default(autoincrement())
-  nombre    String
-  apellido  String
-  ci        String   @unique
-  carrera   String?
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Encargado{
+  id Int @id @default(autoincrement())
+  nombre_completo String
+  usuario String @unique
+  password String 
+  rol Rol
+  estado_cuenta Boolean @default(true)
+  created_at DateTime @default(now())
+  membresias Membresia []
+} 
+
+enum Rol{
+  Presidente
+  Vicepresidente
+  Admin
+}
+
+model Estudiante{
+  id Int @id @default(autoincrement())
+  ci String @unique
+  nombres String
+  apellidos String
+  fecha_nacimiento DateTime? 
+  cuidad String
+  direcion String
+  celular String
+  email String @unique
+  facultad String 
+  carrera String
+  nombre_soce String
+  semestre String
+  matricula_univ String
+  descripcion String
+  estado_inscripcion Estado  @default(Pendiente)
+  fecha_registro DateTime @default(now())
+  documentos Documento[]
+  membresias Membresia[]
+  asistencias Asistencia[]
+}
+
+enum Estado {
+  Pendiente
+  Activo
+  Observado
+  Inactivo
+} 
+
+model Documento {
+  id Int @id @default(autoincrement())
+  estudiante Estudiante @relation(fields: [id_estudiante],references: [id])
+  id_estudiante Int
+  foto_ci String
+  matricula String
+  registro_materia String
+  verfiicado Boolean @default(false)
+  recibido_fisico Boolean @default(false)
+}
+model Membresia{
+  id Int @id @default(autoincrement())
+  estudiante Estudiante @relation(fields: [id_estudiante],references: [id])
+  id_estudiante Int
+  gestion String
+  pagado Boolean @default(false)
+  monto Decimal @default(0.00)
+  validador Encargado @relation(fields: [id_encargado],references: [id])
+  id_encargado Int
+}
+model Evento {
+  id Int @id @default(autoincrement())
+  nombre String
+  tipo TipoEvento
+  fecha DateTime
+  asistencias Asistencia[]
+}
+
+enum TipoEvento{
+  Curso
+  Taller
+  Charla
+  Asamblea
+}
+model Asistencia{
+  id Int @id @default(autoincrement())
+  estudiante Estudiante @relation(fields: [id_estudiante],references: [id])
+  id_estudiante Int
+  evento Evento @relation(fields: [id_evento],references: [id])
+  id_evento Int
+  fecha DateTime @default(now())
 }
