@@ -5,12 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Encargado{
@@ -23,13 +24,11 @@ model Encargado{
   created_at DateTime @default(now())
   membresias Membresia []
 } 
-
 enum Rol{
   Presidente
   Vicepresidente
   Admin
 }
-
 model Estudiante{
   id Int @id @default(autoincrement())
   ci String @unique
