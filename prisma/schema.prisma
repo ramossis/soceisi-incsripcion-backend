@@ -76,8 +76,8 @@ model Membresia{
   gestion String
   pagado Boolean @default(false)
   monto Decimal @default(0.00)
-  validador Encargado @relation(fields: [id_encargado],references: [id])
-  id_encargado Int
+  validador Encargado? @relation(fields: [id_encargado],references: [id])
+  id_encargado Int?
 }
 model Evento {
   id Int @id @default(autoincrement())

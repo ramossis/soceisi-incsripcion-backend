@@ -17,5 +17,8 @@ EstudianteController.getAllEstudiante = async (req, res) => {
         });
     }
 };
-
+EstudianteController.inscribitEstudiante=(req,res)=>{
+    const data=req.body
+    console.log({data})
+}
 module.exports = EstudianteController;
