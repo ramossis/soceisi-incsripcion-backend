@@ -1,4 +1,5 @@
 
+const deleteFromImageKit =require('../utils/deleteFiles')
 const { PrismaClient } = require('@prisma/client');
 const uploadFile = require('../utils/uploadFile');
 
@@ -20,14 +21,16 @@ EstudianteController.getAllEstudiante = async (req, res) => {
     }
 };
 EstudianteController.preInscripcionOnline=async(req,res)=>{
+    let filesIds=[]
    try {
         const data=req.body
         const files=req.files
-        const [urlCi,urlMatricula,urlMateria]= await Promise.all([
+        const [resCi,resMat,resReg]= await Promise.all([
             uploadFile(files.foto_ci[0],data.ci),
             uploadFile(files.matricula[0],data.ci),
             uploadFile(files.registro_materia[0],data.ci)
-        ]) 
+        ])
+        filesIds=[resCi.fileId,resMat.fileId,resReg.fileId]
         const resultado= await prisma.$transaction(async (tx)=>{
             const estudiante= await tx.estudiante.create({
                 data:{
@@ -37,9 +40,9 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
             await tx.documento.create({
                 data:{
                     id_estudiante:estudiante.id,
-                    foto_ci:urlCi,
-                    matricula:urlMatricula,
-                    registro_materia:urlMateria
+                    foto_ci:resCi.url,
+                    matricula:resMat.url,
+                    registro_materia:resReg.url
                 }
             })
             await tx.membresia.create({
@@ -58,7 +61,12 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
         })
 
    } catch (error) {
-        console.error("Error en el servidor",error)
+        if(filesIds.length >0){
+            await deleteFromImageKit(filesIds)
+        }
+        if(error.code=== 'P2002'){
+            return res.status(400).json({error: "El Estudiante ya esta registrado.."})
+        }
         res.status(500).json({errror: "No se pudo procesar la solicitud"})
     
    }

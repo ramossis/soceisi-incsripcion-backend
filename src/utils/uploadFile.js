@@ -17,6 +17,6 @@ const uploadFile=async (file,ci)=>{
         folder: `SOCEIISI/2026/${ciLimpio}`,
         useUniqueFileName: false 
         });
-    return response.url;
+    return response;
 }
 module.exports=uploadFile
