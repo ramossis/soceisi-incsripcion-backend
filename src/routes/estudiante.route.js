@@ -14,5 +14,6 @@ const uploadInscripcion = upload.fields([
 
 router.get('/',verifyToken,EstudianteController.getAllEstudiante)
 router.post('/',uploadInscripcion,EstudianteController.preInscripcionOnline)
-
+router.post('/confirmar-pago',verifyToken,EstudianteController.confirmarPago)
+router.get('/buscarEstudiante:ci',EstudianteController.findEstudiantePreInscrio)
 module.exports=router

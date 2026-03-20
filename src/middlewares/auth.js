@@ -8,7 +8,10 @@ const verifyToken=(req,res,next)=>{
     if(!token) return res.status(401).json({error: `Acceso Denegado... Inicia Sesion`})
     try {
         const decoded = jwt.verify(token,process.env.JWT_SECRET)
-        req.encargadoId=decoded.id
+        req.user={
+            id:decoded.id,
+            rol:decoded.rol
+        }
         next()
     } catch (error) {
         res.status(403).json({error: `Token invalido o expirado`})

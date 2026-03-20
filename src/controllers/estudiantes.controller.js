@@ -16,6 +16,23 @@ EstudianteController.getAllEstudiante = async (req, res) => {
         });
     }
 };
+EstudianteController.findEstudiantePreInscrio=async(req,res)=>{
+    const {ci}=req.params
+    if(!ci)return req.status(404).json({error:'Estudiante no Encontrado'})
+    try {
+        const estudiante=await prisma.estudiante.findUnique({
+            where:{ci},
+            include:{
+                documentos:true,
+                membresias:true
+            }
+        })
+        return res.status(200).json(estudiante)
+    } catch (error) {
+        return res.status(500).json({error: `Estudiante no Encontrado`})
+    }
+}
+
 EstudianteController.preInscripcionOnline=async(req,res)=>{
     let filesIds=[]
    try {
@@ -66,5 +83,45 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
         res.status(500).json({errror: "No se pudo procesar la solicitud"})
     
    }
+}
+EstudianteController.confirmarPago=async(req,res)=>{
+    const {id_estudiante,monto}=req.body
+    const id_encargado=req.user.id
+    try {
+        const resultado= await prisma.$transaction(async(tx)=>{
+            const membresia = await tx.membresia.updateMany({
+                where:{
+                    id_estudiante:parseInt(id_estudiante),
+                    gestion:`2026`
+                },
+                data:{
+                    pagado:true,
+                    monto,
+                    id_encargado
+                }
+            })
+            await tx.documento.updateMany({
+                where:{
+                    id_estudiante:parseInt(id_estudiante)},
+                    data:{
+                        recibido_fisico:true,
+                        verfiicado:true
+                    }
+            })
+            const estudiante= await tx.estudiante.update({
+                where:{id:parseInt(id_estudiante)},
+                data:{estado_inscripcion:"Activo"}
+            })
+            return estudiante
+        })
+        res.status(200).json({
+            message:"Inscripcion completada y Estudiante activado",
+            estudiante: `${resultado.nombres} - ${resultado.apellidos} `
+        })
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({error:`Error al procesar pago fisico`})
+    }
 }
 module.exports = EstudianteController;
