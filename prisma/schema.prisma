@@ -12,6 +12,8 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 model Encargado{
