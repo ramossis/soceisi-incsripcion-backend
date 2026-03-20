@@ -1,6 +1,8 @@
 const express=require('express')
 const router=express.Router()
 
+const {verifyToken}=require('../middlewares/auth')
+
 const upload=require('../config/saveImage')
 const EstudianteController = require('../controllers/estudiantes.controller')
 
@@ -10,7 +12,7 @@ const uploadInscripcion = upload.fields([
     {name:'registro_materia', maxCount:1},
 ])
 
-router.get('/',EstudianteController.getAllEstudiante)
+router.get('/',verifyToken,EstudianteController.getAllEstudiante)
 router.post('/',uploadInscripcion,EstudianteController.preInscripcionOnline)
 
 module.exports=router
