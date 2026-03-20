@@ -22,5 +22,6 @@ const signToken=(id,rol)=>{
     process.env.JWT_SECRET,
     {expiresIn:'1h'}
 )
+    return token
 }
 module.exports={verifyToken,signToken}
