@@ -1,11 +1,7 @@
 
 const deleteFromImageKit =require('../utils/deleteFiles')
-const { PrismaClient } = require('@prisma/client');
 const uploadFile = require('../utils/uploadFile');
-
-// Instancia limpia. Si el .env está bien, esto NO debería fallar.
-const prisma = new PrismaClient();
-
+const {prisma}=require('../config/db')
 const EstudianteController = {};
 
 EstudianteController.getAllEstudiante = async (req, res) => {

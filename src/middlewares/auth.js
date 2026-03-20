@@ -14,4 +14,13 @@ const verifyToken=(req,res,next)=>{
         res.status(403).json({error: `Token invalido o expirado`})
     }
 }
-module.exports={verifyToken}
+
+const signToken=(id,rol)=>{
+    const token= jwt.sign({
+        id,rol
+    },
+    process.env.JWT_SECRET,
+    {expiresIn:'1h'}
+)
+}
+module.exports={verifyToken,signToken}
