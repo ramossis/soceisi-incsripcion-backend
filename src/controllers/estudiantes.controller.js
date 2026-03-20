@@ -63,7 +63,8 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
                     id_estudiante:estudiante.id,
                     gestion:"2026",
                     pagado:false,
-                    monto:0.00
+                    monto:0.00,
+                    id_encargado:parseInt()
                 }
             });
             return estudiante
