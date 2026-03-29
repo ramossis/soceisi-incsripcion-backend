@@ -38,6 +38,12 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
    try {
         const data=req.body
         const files=req.files
+        if(!files.foto_ci|| !files.matricula || !files.registro_materia){
+            return res.status(400).json({error: "Faltan Documentos obligatorios (CI, Matricula, Registro de Materia)"})
+        }
+        console.log("Datos",data)
+        console.log("Files",files)
+
         const [resCi,resMat,resReg]= await Promise.all([
             uploadFile(files.foto_ci[0],data.ci),
             uploadFile(files.matricula[0],data.ci),
@@ -47,7 +53,21 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
         const resultado= await prisma.$transaction(async (tx)=>{
             const estudiante= await tx.estudiante.create({
                 data:{
-                    ...data
+                    ci:data.ci.toString(),
+                    nombres:data.nombres,
+                    apellidos:data.apellidos,
+                    fecha_nacimiento:new Date(data.fecha_nacimiento),
+                    cuidad:data.cuidad||data.cuidad || '',
+                    direcion:data.direccion,
+                    email:data.email,
+                    celular:data.celular,
+                    facultad:data.facultad,
+                    carrera:data.carrera,
+                    nombre_soce:data.nombre_soce || '',
+                    semestre:data.semestre|| '',
+                    matricula_univ:data.matricula_univ || '',
+                    descripcion: data.descripcion || '',
+                    estado_inscripcion:"Pendiente"
                 }
             });
             await tx.documento.create({
@@ -64,7 +84,7 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
                     gestion:"2026",
                     pagado:false,
                     monto:0.00,
-                    id_encargado:parseInt()
+                    id_encargado:null
                 }
             });
             return estudiante
@@ -78,10 +98,13 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
         if(filesIds.length >0){
             await deleteFromImageKit(filesIds)
         }
+        console.error("--- ERROR EN TRANSACCIÓN ---");
+        console.error(error); 
+        console.error("---------------------------");
         if(error.code=== 'P2002'){
             return res.status(400).json({error: "El Estudiante ya esta registrado.."})
         }
-        res.status(500).json({errror: "No se pudo procesar la solicitud"})
+        res.status(500).json({error: "No se pudo procesar la solicitud"})
     
    }
 }
