@@ -91,7 +91,8 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
         })
         res.status(201).json({
             message: "Pre Inscripcion enviada Correctamente",
-            estudiante_id:resultado.id
+            estudiante_id:resultado.id,
+            estudiante:resultado
         })
 
    } catch (error) {
