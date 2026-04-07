@@ -6,7 +6,11 @@ const EstudianteController = {};
 
 EstudianteController.getAllEstudiante = async (req, res) => {
     try {
-        const estudiantes = await prisma.estudiante.findMany();
+        const estudiantes = await prisma.estudiante.findMany({
+            include:{
+                documentos:true
+            }
+        });
         return res.status(200).json(estudiantes);
     } catch (error) {
         console.error("DETALLE DEL ERROR:", error);
