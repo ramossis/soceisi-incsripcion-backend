@@ -88,7 +88,7 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
                     gestion:"2026",
                     pagado:false,
                     monto:0.00,
-                    tipo_miembto:null,
+                    tipo_miembto:"Nuevo",
                     id_encargado:null
                 }
             });
