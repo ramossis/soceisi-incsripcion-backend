@@ -114,7 +114,7 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
    }
 }
 EstudianteController.confirmarPago=async(req,res)=>{
-    const {id_estudiante,monto}=req.body
+    const {id_estudiante,monto,tipo_miembro}=req.body
     const id_encargado=req.user.id
     try {
         const resultado= await prisma.$transaction(async(tx)=>{
@@ -126,7 +126,8 @@ EstudianteController.confirmarPago=async(req,res)=>{
                 data:{
                     pagado:true,
                     monto,
-                    id_encargado
+                    tipo_miembto:tipo_miembro,
+                    id_encargado,
                 }
             })
             await tx.documento.updateMany({

@@ -76,10 +76,15 @@ model Membresia{
   estudiante Estudiante @relation(fields: [id_estudiante],references: [id])
   id_estudiante Int
   gestion String
+  tipo_miembto Tipo
   pagado Boolean @default(false)
   monto Decimal @default(0.00)
   validador Encargado? @relation(fields: [id_encargado],references: [id])
   id_encargado Int?
+}
+enum Tipo{
+  Nuevo
+  Antiguo
 }
 model Evento {
   id Int @id @default(autoincrement())
