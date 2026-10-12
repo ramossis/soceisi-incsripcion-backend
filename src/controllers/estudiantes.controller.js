@@ -85,7 +85,7 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
             await tx.membresia.create({
                 data:{
                     id_estudiante:estudiante.id,
-                    gestion:"2026",
+                    gestion:"2026/2",
                     pagado:false,
                     monto:0.00,
                     tipo_miembto:"Nuevo",
@@ -114,6 +114,50 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
     
    }
 }
+EstudianteController.delete=async(req,res)=>{
+    const {id}=req.params
+    const studentId = parseInt(id,10)
+
+    if(isNaN(studentId)){
+        return res.status(400).json({error:"El ID proporcionado no es valido"})
+    }
+    try {
+        const estudiante= await prisma.estudiante.findUnique({
+            where:{id:studentId},
+            include:{documentos:true}
+        })
+
+        if(!estudiante){
+            return res.status(404).json({error:"Estudiante no encontrado"})
+        }
+
+        const filesToDelete=[]
+         if(estudiante.documentos && estudiante.documentos.length >0){
+            estudiante.documentos.forEach((docs)=>{
+                if(docs.foto_ci) filesToDelete.push(docs.foto_ci)
+                if(docs.matricula) filesToDelete.push(docs.matricula)
+                if(docs.registro_materia) filesToDelete.push(docs.registro_materia)
+            })
+
+        await prisma.$transaction(async(tx)=>{
+
+            await tx.documento.deleteMany({where:{id_estudiante:studentId}})
+            await tx.membresia.deleteMany({where:{id_estudiante:studentId}})
+            await tx.estudiante.deleteMany({where:{id:studentId}})
+        })
+
+        if (filesToDelete.length >0){
+            await deleteFromImageKit(filesToDelete)
+        }
+        return res.status(200).json({message:"Estudiante Eliminado con todos sus registros asociados"})
+    }
+
+    } catch (error) {
+        console.error("Error al eliminar estudiante",error)
+        return res.status(500).json({error:"Error interno al eliminar al Estudiante"})
+    }
+
+}
 EstudianteController.confirmarPago=async(req,res)=>{
     const {id_estudiante,monto,tipo_miembro}=req.body
     const id_encargado=req.user.id
@@ -122,7 +166,7 @@ EstudianteController.confirmarPago=async(req,res)=>{
             const membresia = await tx.membresia.updateMany({
                 where:{
                     id_estudiante:parseInt(id_estudiante),
-                    gestion:`2026`
+                    gestion:`2026/2`
                 },
                 data:{
                     pagado:true,
@@ -155,4 +199,17 @@ EstudianteController.confirmarPago=async(req,res)=>{
         res.status(500).json({error:`Error al procesar pago fisico`})
     }
 }
+EstudianteController.reinscripcionEstudiante=(req,res)=>{
+    try {
+        const {ci}=req.body
+        const  Estudiante = prisma.$transaction(async(tx)=>{
+            let existeEstudiante = await tx.estudiante.findUnique({where:ci})
+            console.log(existeEstudiante) 
+        })
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 module.exports = EstudianteController;
