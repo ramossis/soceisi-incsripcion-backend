@@ -11,6 +11,7 @@ app.use(express.urlencoded({extended:true}))
 
 app.get('/',(req,res)=>res.send('API SOCEIISI 2026 - Operativa'))
 app.use('/api/estudiante',require('./src/routes/estudiante.route'))
+app.use('/api/evento',require('./src/routes/evento.route'))
 app.use(`/api/login`,require('./src/routes/auth.route'))
 
 const PORT=process.env.PORT || 3000

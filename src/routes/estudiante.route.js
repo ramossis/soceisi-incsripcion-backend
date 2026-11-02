@@ -17,5 +17,5 @@ router.post('/',uploadInscripcion,EstudianteController.preInscripcionOnline)
 router.post('/confirmar-pago',verifyToken,EstudianteController.confirmarPago)
 router.get('/buscarEstudiante:ci',EstudianteController.findEstudiantePreInscrio)
 
-router.delete('/:id',EstudianteController.delete)
+router.delete('/:id',verifyToken,EstudianteController.delete)
 module.exports=router
