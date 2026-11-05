@@ -14,14 +14,14 @@ asistenciaController.registrarAsistencia=async(req,res)=>{
         })
         if(!miembro)return res.status(400).json({error:'No se encontro un registro con ese Carnet'})
         
-        const evento= prisma.evento.findUnique({
+        const evento= await prisma.evento.findUnique({
             where:{id:eventoId}
         })
         if(!evento)return res.status(400).json({error:'El evento no existe o ya finalizo'})
         
         const asistenciaExistente= await prisma.asistencia.findFirst({
             where:{
-                eventoId:eventoId,
+                id_evento:eventoId,
                 id_estudiante:miembro.id
             }
         })
@@ -34,7 +34,13 @@ asistenciaController.registrarAsistencia=async(req,res)=>{
                 id_evento:eventoId
             }
         })
+        return res.status(201).json({
+            message:`Asistencia registrada con exito, ${miembro.nombres}`,
+            data: nuevaAsistencia
+        })
     } catch (error) {
-        
+        console.error('Error al registrar asistencia',error)
+        return res.status(500).json({error:"Error interno al registrar la asistencia"})
     }
 }
+module.exports=asistenciaController
