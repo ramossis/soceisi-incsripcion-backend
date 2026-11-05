@@ -11,7 +11,7 @@ const {createEventoSchema}=require('../validations/evento.validation')
 
 router.get('/',verifyToken,eventoController.getAllEventos)
 router.post('/',verifyToken,validate(createEventoSchema),eventoController.createEvento)
-router.get('/',verifyToken,eventoController.findEvento)
+router.get('/:id',verifyToken,eventoController.findEvento)
 router.put('/:id',verifyToken,validate(createEventoSchema),eventoController.updateEvento)
 router.delete('/:id',verifyToken,eventoController.deleteEvento)
 

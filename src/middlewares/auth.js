@@ -14,8 +14,15 @@ const verifyToken=(req,res,next)=>{
         }
         next()
     } catch (error) {
-        res.status(403).json({error: `Token invalido o expirado`})
+        res.status(401).json({error: `Token invalido o expirado`})
     }
+}
+
+const requireRole = (...roles) => (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.rol)) {
+        return res.status(403).json({ error: 'No autorizado para esta accion' })
+    }
+    next()
 }
 
 const signToken=(id,rol)=>{
@@ -27,4 +34,4 @@ const signToken=(id,rol)=>{
 )
     return token
 }
-module.exports={verifyToken,signToken}
+module.exports={verifyToken,signToken,requireRole}
