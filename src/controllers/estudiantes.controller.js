@@ -42,7 +42,7 @@ EstudianteController.preInscripcionOnline=async(req,res)=>{
    try {
         const data=req.body
         const files=req.files
-        if(!files.foto_ci|| !files.matricula || !files.registro_materia){
+        if(!files?.foto_ci || !files?.matricula || !files?.registro_materia){
             return res.status(400).json({error: "Faltan Documentos obligatorios (CI, Matricula, Registro de Materia)"})
         }
         console.log("Datos",data)
@@ -141,6 +141,7 @@ EstudianteController.delete=async(req,res)=>{
 
         await prisma.$transaction(async(tx)=>{
 
+            await tx.asistencia.deleteMany({where:{id_estudiante:studentId}})
             await tx.documento.deleteMany({where:{id_estudiante:studentId}})
             await tx.membresia.deleteMany({where:{id_estudiante:studentId}})
             await tx.estudiante.deleteMany({where:{id:studentId}})

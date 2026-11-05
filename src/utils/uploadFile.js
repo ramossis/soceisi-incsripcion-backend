@@ -8,7 +8,7 @@ const uploadFile=async (file,ci)=>{
     const ciLimpio = ci.toString().trim();
     
   
-    const nombreSeguro = `${file.fieldname}_${ciLimpio}_${Date.toLocaleString()}${ext}`
+    const nombreSeguro = `${file.fieldname}_${ciLimpio}_${Date.now()}${ext}`
         .replace(/\s+/g, '_')   
         .replace(/[^\w.-]/g, ''); 
     const response = await imagekit.upload({
